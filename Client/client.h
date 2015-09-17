@@ -36,6 +36,10 @@ private:
     SpotSonicationParam m_parameter;
     qint64 m_command;
 
+    QTcpSocket *m_progressConnection;    // Socket for progress update
+    qint64 m_progressBytes;
+    QHash<QString, int> m_progressHash;
+
 public:
     Client();
     ~Client();
@@ -50,6 +54,7 @@ private slots:
     void acceptConnection();    // Build connection
     void displayError(QAbstractSocket::SocketError socketError);    //Display the error
     QString getLocalIP();
+    void varInit();
 
     void convertSpot();
     void readHead();
@@ -57,7 +62,7 @@ private slots:
     void receiveCommand();
     void bytes(qint64 byteswrite);
 
-    void varInit();
+    void connectProgress();
 
 public slots:
     void listen();    // Start to listen port
@@ -65,6 +70,8 @@ public slots:
     QHash<float, QList<Spot3DCoordinate> > getCoordinate();
     QHash<float, QList<int> > getSpotOrder();
     SpotSonicationParam getParameter();
+
+    void sendProgress();
 };
 
 #endif // CLIENT_H

@@ -15,6 +15,9 @@ Client::Client()
 
     m_ipAddress = getLocalIP();
     qDebug() << "IP Address:" << m_ipAddress;
+
+    m_progressHash.insert("Total foci", 20);
+    m_progressHash.insert("Sonicated foci", 0);
 }
 
 Client::~Client()
@@ -270,4 +273,47 @@ QHash<float, QList<int> > Client::getSpotOrder()
 SpotSonicationParam Client::getParameter()
 {
     return m_parameter;
+}
+
+
+void Client::connectProgress()
+{
+    QHostAddress ipAddress("172.168.0.116");    // Set the IP address of another computer
+    m_progressConnection->connectToHost(ipAddress, 666);    // Connect
+
+    connect(m_progressConnection, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SLOT(displayError(QAbstractSocket::SocketError)));
+}
+
+
+void Client::sendProgress()
+{
+    connectProgress();
+    m_outBlock.resize(0);
+
+    QDataStream m_sendOut(&m_outBlock, QIODevice::WriteOnly);
+    m_sendOut.setVersion(QDataStream::Qt_4_6);
+
+    qDebug() << "Sending progress information...";
+
+    m_sendOut << qint64(0)
+              << m_progressHash;
+
+    m_progressBytes = m_outBlock.size();
+
+    qDebug() << "m_progressBytes:" << m_progressBytes;
+    qDebug() << "m_progressHash:" << m_progressHash;
+
+    m_sendOut.device()->seek(0);
+    m_sendOut << m_totalBytes;    // Find the head of array and write the haed information
+
+    m_progressConnection->write(m_outBlock);
+    m_progressConnection->waitForBytesWritten(3000);
+
+    m_outBlock.resize(0);
+    m_progressConnection->close();
+
+    qDebug() << "Progress information send finished.";
+    qCDebug(CLIENT()) << CLIENT().categoryName() << ":" << "SEND PROGRESS UPDATE FINISHED.";
+    qDebug() << "-------------------";
 }
