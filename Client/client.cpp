@@ -5,13 +5,13 @@
 Q_LOGGING_CATEGORY(CLIENT, "CLIENT")
 
 
-Client::Client()
+Client::Client(QObject *parent): QObject(parent), m_totalBytes(0)
 {
 // Initialize variables and connections
+    m_progressConnection = new QTcpSocket;
+
     QDataStream in(m_tcpClientConnection);
     in.setVersion(QDataStream::Qt_4_6);
-
-    m_totalBytes = 0;
 
     m_ipAddress = getLocalIP();
     qDebug() << "IP Address:" << m_ipAddress;
@@ -260,26 +260,10 @@ void Client::bytes(qint64 byteswrite)
 }
 
 
-QHash<float, QList<Spot3DCoordinate> > Client::getCoordinate()
-{
-    return m_spot3D;
-}
-
-QHash<float, QList<int> > Client::getSpotOrder()
-{
-    return m_spotOrder;
-}
-
-SpotSonicationParam Client::getParameter()
-{
-    return m_parameter;
-}
-
-
 void Client::connectProgress()
 {
     QHostAddress ipAddress("172.168.0.116");    // Set the IP address of another computer
-    m_progressConnection->connectToHost(ipAddress, 666);    // Connect
+    m_progressConnection->connectToHost(ipAddress, 6667);    // Connect
 
     connect(m_progressConnection, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(displayError(QAbstractSocket::SocketError)));

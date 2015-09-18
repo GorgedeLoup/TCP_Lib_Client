@@ -3,25 +3,28 @@
 
 #define Coordinate float
 
-#define VOLTAGE 14
-#define MS_UNIT 1000
-#define PERCENT_UNIT 100
-#define TEST_SPOT_COUNT 20
+enum cmdType
+{
+    START = 1,
+    STOP,
+    PAUSE,
+    RESUME
+};
 
 struct Plane2DCoordinate
 {
-    float x;
-    float y;
+    Coordinate x;
+    Coordinate y;
 };
 
 struct Spot3DCoordinate
 {
-    float x;
-    float y;
-    float z;
+    Coordinate x;
+    Coordinate y;
+    Coordinate z;
 };
 
-struct SpotSonicationParam
+struct SpotSonicationParameter
 {
     float volt;
     int totalTime;

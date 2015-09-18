@@ -32,8 +32,7 @@ private:
     QHash<float, QList<float> > m_hashY;
     QHash<float, QList<float> > m_hashZ;
     QHash<float, QList<int> > m_spotOrder;
-    //QHash<QString, int> m_parameter;
-    SpotSonicationParam m_parameter;
+    SpotSonicationParameter m_parameter;
     qint64 m_command;
 
     QTcpSocket *m_progressConnection;    // Socket for progress update
@@ -41,7 +40,7 @@ private:
     QHash<QString, int> m_progressHash;
 
 public:
-    Client();
+    Client(QObject *parent = 0);
     ~Client();
 
 signals:
@@ -49,6 +48,7 @@ signals:
     commandStop();
     commandPause();
     commandResume();
+    receivingCompleted();
 
 private slots:
     void acceptConnection();    // Build connection
@@ -67,9 +67,9 @@ private slots:
 public slots:
     void listen();    // Start to listen port
 
-    QHash<float, QList<Spot3DCoordinate> > getCoordinate();
-    QHash<float, QList<int> > getSpotOrder();
-    SpotSonicationParam getParameter();
+    inline QHash<float, QList<Spot3DCoordinate> > getCoordinate(){return m_spot3D;}
+    inline QHash<float, QList<int> > getSpotOrder(){return m_spotOrder;}
+    inline SpotSonicationParameter getParameter(){return m_parameter;}
 
     void sendProgress();
 };
