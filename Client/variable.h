@@ -2,6 +2,7 @@
 #define VARIABLE
 
 #define Coordinate float
+#define CONFIG_PATH "../lib/config/config.ini"
 
 enum cmdType
 {

@@ -289,7 +289,7 @@ void Client::sendProgress()
     qDebug() << "m_progressHash:" << m_progressHash;
 
     m_sendOut.device()->seek(0);
-    m_sendOut << m_totalBytes;    // Find the head of array and write the haed information
+    m_sendOut << m_progressBytes;    // Find the head of array and write the haed information
 
     m_progressConnection->write(m_outBlock);
     m_progressConnection->waitForBytesWritten(3000);
